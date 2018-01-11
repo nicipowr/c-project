@@ -22,7 +22,8 @@ main (void) {
 
       return true;
     }
-      
+
+    puts ("PID");
     while (ep = readdir (dp))
       if (numbers_only (ep->d_name)) puts (ep->d_name);
     (void) closedir (dp);
