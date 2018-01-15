@@ -7,7 +7,6 @@ int
 main (void) {
   DIR *dp;
   struct dirent *ep;
-  
   dp = opendir ("/proc");
   if (dp != NULL) {
     bool
