@@ -84,14 +84,15 @@ int main(void) {
                         //char *foo = trimwhitespace(str);
                         //foo += 7;
                         //strcat()
-                    }
-                    if (strstr(str,"Uid:")){
-
-                        if (getuid() == )
                         printf("%s ", ep->d_name);
                         printf("%s\t",name);
                         printf("%d\n",vmrss);
                     }
+                    //if (strstr(str,"Uid:")){
+
+                      //  if (getuid() == )
+
+                    //}
 
 
 
