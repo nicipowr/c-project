@@ -32,7 +32,6 @@ int main(void) {
   struct dirent *ep;
   struct stat statbuf;
   char *filepathtostatus;
-  char name[10];
 
   if ((dp = opendir("/proc")) != NULL) {
     bool numbers_only(char charac[]) {
@@ -45,7 +44,10 @@ int main(void) {
     }
 
     puts("PID Name");
-
+    
+    char name[10];
+    // unsigned uid1 = 0, uid2 = 0, uid3 = 0, uid4 = 0;
+    
     while (ep = readdir(dp)) {
       //stat(ep->d_name,&statbuf);
       if (numbers_only(ep->d_name)) {
@@ -58,9 +60,11 @@ int main(void) {
 	  int vmrss = 0;
 
 	  fscanf(fp, "Name:\t%s", name);
-	  //fscanf(fp, "Name:\t%s", name);
+
+	  // fscanf(fp, "Uid:\t%u\t%u\t%u\t%u", &uid1, &uid2, &uid3, &uid4);
 	  //*str += 5;
 
+	  // if (uid1 != 0 && uid2 != 0 && uid3 != 0 && uid4 != 0)
 	  printf("%s %s\n", ep->d_name, name);
 	  //printf("%s ", ep->d_name);
 	  //printf("%s \n",name);
