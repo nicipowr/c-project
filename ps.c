@@ -9,29 +9,35 @@
 #include <string.h>
 #include <ctype.h>
 
-char *trimwhitespace(char *str)
-{
+char *trimwhitespace(char *str) {
     char *end;
 
-    while(isspace((unsigned char)*str)) str++;
+    while (isspace((unsigned char) *str)) str++;
 
-    if(*str == 0)  // All spaces?
+    if (*str == 0)  // All spaces?
         return str;
 
     end = str + strlen(str) - 1;
-    while(end > str && isspace((unsigned char)*end)) end--;
+    while (end > str && isspace((unsigned char) *end)) end--;
 
-    *(end+1) = 0;
+    *(end + 1) = 0;
 
     return str;
 }
 
+char *getStatusFilePath(char *name)
+{
+    char *filePath = malloc(12);
+    strcpy(filePath, "/proc/");
+    strcat(filePath, name);
+    strcat(filePath, "/status");
+    return filePath;
+}
+
 int main(void) {
     DIR *dp;
-    FILE *fp;
     struct dirent *ep;
     struct stat statbuf;
-    char *filepathtostatus;
 
     dp = opendir("/proc");
     if (dp != NULL) {
@@ -45,56 +51,74 @@ int main(void) {
             return true;
         }
 
-        puts("PID COMMAND RSS");
+        puts("PID\tCOMMAND\tRSS");
 
         while (ep = readdir(dp)) {
             //stat(ep->d_name,&statbuf);
             if (numbers_only(ep->d_name)) {
-                char *filepathtostatus = malloc(30);
-                strcat(filepathtostatus, "/proc/");
-                strcat(filepathtostatus, ep->d_name);
-                strcat(filepathtostatus, "/status");
-
-                fp = fopen(filepathtostatus, "r");
-                free(filepathtostatus);
+                FILE *fp;
+                char *path = getStatusFilePath(ep->d_name);
+                fp = fopen(path, "r");
+                free(path);
 
                 char str[250];
                 int vmrss = 0;
                 char name[256] = "";
 
-                while (fgets(str,250,fp) !=NULL ){
-                    if (strstr(str,"Name:")){
+                while (fgets(str, 250, (FILE *)fp) != NULL) {
+                    if (strstr(str, "Name:")) {
                         char *foo = trimwhitespace(str);
                         foo += 6;
                         //*str += 5;
-                        strcat(name,foo);
+                        strcat(name, foo);
                         //printf("%s ", ep->d_name);
                         //printf("%s \n",name);
                     }
-                    if (strstr(str,"VmRSS:")) {
+                    if (strstr(str, "VmRSS:")) {
                         char *p = str;
                         while (*p) { // While there are more characters to process...
                             if (isdigit(*p)) { // Upon finding a digit, ...
                                 long val = strtol(p, &p, 10); // Read a number, ...
-                                vmrss = val;
+                                if (val != 0){vmrss = val;}
                             } else { // Otherwise, move on to the next character.
                                 p++;
                             }
                         }
+
                         //char *foo = trimwhitespace(str);
                         //foo += 7;
                         //strcat()
-                        printf("%s ", ep->d_name);
-                        printf("%s\t",name);
-                        printf("%d\n",vmrss);
+
                     }
-                    //if (strstr(str,"Uid:")){
 
-                      //  if (getuid() == )
+                    if (strstr(str, "Uid:")) {
 
-                    //}  
+                        char *n = trimwhitespace(str);
 
+                        int tmpstor;
+                        char tmpstruid[50];
+                        char finalstruid[4];
+                        char tmpuid[50];
 
+                        while (*n) { // While there are more characters to process...
+                            if (isdigit(*n)) { // Upon finding a digit, ...
+                                long val2 = strtol(n, &n, 10); // Read a number, ...
+                                tmpstor = val2;
+                            } else { // Otherwise, move on to the next character.
+                                n++;
+                            }
+                        }
+                        sprintf(tmpstruid, "%d", tmpstor);
+                        strncpy(finalstruid,tmpstruid,4);
+                        finalstruid[4]=0;
+                        sprintf(tmpuid, "%d", getuid());
+                        //printf("%s  %s\n",finalstruid,tmpuid);
+                        if (strcmp(finalstruid,tmpuid)==0){
+                            printf("%s\t", ep->d_name);
+                            printf("%s\t", name);
+                            printf("%d\n", vmrss);
+                        }
+                    }
 
 
                 }
