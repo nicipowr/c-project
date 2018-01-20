@@ -34,6 +34,18 @@ char *getStatusFilePath(char *name)
     return filePath;
 }
 
+int GetNumber(const char *str) {
+    while (*str) {
+        int number;
+        if (sscanf(str, "%d", &number) == 1) {
+            return number;
+        }
+        str++;
+    }
+    // No int found
+    return -1;
+}
+
 int main(void) {
     DIR *dp;
     struct dirent *ep;
@@ -51,7 +63,7 @@ int main(void) {
             return true;
         }
 
-        puts("PID\tCOMMAND\tRSS");
+        //puts("PID\tCOMMAND\tRSS");
 
         while (ep = readdir(dp)) {
             //stat(ep->d_name,&statbuf);
@@ -64,8 +76,9 @@ int main(void) {
                 char str[250];
                 int vmrss = 0;
                 char name[256] = "";
-
+                bool myfile = false;
                 while (fgets(str, 250, (FILE *)fp) != NULL) {
+
                     if (strstr(str, "Name:")) {
                         char *foo = trimwhitespace(str);
                         foo += 6;
@@ -75,7 +88,7 @@ int main(void) {
                         //printf("%s \n",name);
                     }
                     if (strstr(str, "VmRSS:")) {
-                        char *p = str;
+                        /*char *p = str;
                         while (*p) { // While there are more characters to process...
                             if (isdigit(*p)) { // Upon finding a digit, ...
                                 long val = strtol(p, &p, 10); // Read a number, ...
@@ -83,8 +96,13 @@ int main(void) {
                             } else { // Otherwise, move on to the next character.
                                 p++;
                             }
+                        }*/
+                        vmrss = GetNumber(str);
+                        if (myfile ){
+                            printf("%s\t", ep->d_name);
+                            printf("%s\t", name);
+                            printf("%d\n", vmrss);
                         }
-
                         //char *foo = trimwhitespace(str);
                         //foo += 7;
                         //strcat()
@@ -100,23 +118,23 @@ int main(void) {
                         char finalstruid[4];
                         char tmpuid[50];
 
-                        while (*n) { // While there are more characters to process...
+                        /*while (*n) { // While there are more characters to process...
                             if (isdigit(*n)) { // Upon finding a digit, ...
                                 long val2 = strtol(n, &n, 10); // Read a number, ...
                                 tmpstor = val2;
                             } else { // Otherwise, move on to the next character.
                                 n++;
                             }
-                        }
+                        }*/
+                        tmpstor = GetNumber(str);
+
                         sprintf(tmpstruid, "%d", tmpstor);
                         strncpy(finalstruid,tmpstruid,4);
                         finalstruid[4]=0;
                         sprintf(tmpuid, "%d", getuid());
                         //printf("%s  %s\n",finalstruid,tmpuid);
                         if (strcmp(finalstruid,tmpuid)==0){
-                            printf("%s\t", ep->d_name);
-                            printf("%s\t", name);
-                            printf("%d\n", vmrss);
+                            myfile = true;
                         }
                     }
 
