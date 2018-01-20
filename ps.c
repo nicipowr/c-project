@@ -58,20 +58,19 @@ int main(void) {
                 fp = fopen(filepathtostatus, "r");
                 free(filepathtostatus);
 
-                char str[250];
+		char name[80];
+		int n;
                 int vmrss = 0;
-                char name[256] = "";
 
-                while (fgets(str,250,fp) !=NULL ){
-                    if (strstr(str,"Name:")){
-                        char *foo = trimwhitespace(str);
-                        foo += 6;
-                        //*str += 5;
-                        strcat(name,foo);
-                        //printf("%s ", ep->d_name);
-                        //printf("%s \n",name);
-                    }
-                    if (strstr(str,"VmRSS:")) {
+		fscanf(fp, "Name:\t%s", name);
+                //*str += 5;
+		printf("%s ", ep->d_name);
+		printf("%s\t", name);
+                //printf("%s ", ep->d_name);
+                //printf("%s \n",name);
+		
+		/*
+		if (strstr(str,"VmRSS:")) {
                         char *p = str;
                         while (*p) { // While there are more characters to process...
                             if (isdigit(*p)) { // Upon finding a digit, ...
@@ -84,21 +83,14 @@ int main(void) {
                         //char *foo = trimwhitespace(str);
                         //foo += 7;
                         //strcat()
-                        printf("%s ", ep->d_name);
-                        printf("%s\t",name);
                         printf("%d\n",vmrss);
                     }
+		*/
                     //if (strstr(str,"Uid:")){
 
                       //  if (getuid() == )
 
-                    //}  
-
-
-
-
-                }
-
+                    //}
 
                 //if (statbuf.st_uid == getuid()) {
 
